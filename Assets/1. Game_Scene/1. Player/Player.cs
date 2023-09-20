@@ -6,6 +6,9 @@ public class Player : MonoBehaviour
 {
     public Animator player_Animator;//애니메이션
 
+    public float attack_next_Time;//어택 다음공격 쿨타임 (0.25초 이내면 한번 더 공격
+    public int attack_Cnt;
+
     public bool is_roll;//구르고 있는지
     public float speed;//속도
 
@@ -15,18 +18,62 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        speed = 4.5f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            player_Animator.SetTrigger("Is_Roll");
-        }
+        Roll();
 
         Move();
+
+        Attack();
+    }
+
+    public void Roll()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            speed = 4.5f;
+            is_roll = true;
+            player_Animator.SetTrigger("Is_Roll");
+        }
+    }
+    public void Roll_End()
+    {
+        is_roll = false;
+    }
+
+    public void Attack_Start()
+    {
+        speed = 0;
+    }
+    public void Attack()
+    {
+        attack_next_Time += Time.deltaTime;
+
+        if (Input.GetMouseButtonDown(0) && is_roll == false && attack_next_Time > 0.25f)
+        {
+            attack_Cnt++;
+
+            if(attack_Cnt > 3)
+            {
+                attack_Cnt = 1;
+            }
+
+            if (attack_next_Time > 1.0f)
+                attack_Cnt = 1;
+
+            player_Animator.SetTrigger("Attack" + attack_Cnt);
+
+            // Reset timer
+            attack_next_Time = 0.0f;
+        }
+    }
+    public void Attack_End()
+    {
+        speed = 4.5f;
     }
 
     public void Move()
