@@ -21,6 +21,16 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player_Animator.SetTrigger("Is_Roll");
+        }
+
+        Move();
+    }
+
+    public void Move()
+    {
         //움직임 구현
         if (Input.GetKey(KeyCode.D))
         {
@@ -53,7 +63,7 @@ public class Player : MonoBehaviour
         }
 
         //좌우 반전
-        if(Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D))
         {
             gameObject.transform.localScale = new Vector2(0.8f, 0.8f);
         }
@@ -61,6 +71,5 @@ public class Player : MonoBehaviour
         {
             gameObject.transform.localScale = new Vector2(-0.8f, 0.8f);
         }
-
     }
 }
