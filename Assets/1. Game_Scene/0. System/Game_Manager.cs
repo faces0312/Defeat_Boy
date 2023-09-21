@@ -10,6 +10,7 @@ public class Game_Manager : MonoBehaviour
     public Player player;
 
     public RectTransform stamina;
+    public RectTransform stamina_loading;
 
     private void Awake()
     {

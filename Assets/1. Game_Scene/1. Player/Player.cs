@@ -8,14 +8,21 @@ public class Player : MonoBehaviour
 
     public Animator player_Animator;//애니메이션
 
+    //공격
     public float attack_next_Time;//어택 다음공격 쿨타임 (0.25초 이내면 한번 더 공격
     public int attack_Cnt;//콤보 공격 횟수
     public bool move_right;//오른쪽으로 가고 있는지
 
-    public bool is_roll;//구르고 있는지
     public float speed;//속도
 
+    //Roll
+    public bool is_roll;//구르고 있는지
+    //Run
     public bool is_Run;//뛰고 있다
+    //스태미나
+    public bool is_stamina;//스태미나 있는지
+
+
 
     public float xMove;//좌우 입력
     public float yMove;//상하 입력
@@ -23,6 +30,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         is_Run = false;
+        is_stamina = true;
         speed = 3f;
     }
 
@@ -36,14 +44,17 @@ public class Player : MonoBehaviour
         Attack();
 
         Run();
+
+        Stamina_Reload();
+        Stamina_Loading();
         Stamina();
     }
 
     public void Roll()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && gm.stamina.localScale.x > 0.2f)
+        if (Input.GetKeyDown(KeyCode.Space) && gm.stamina.localScale.x >= 0.2f && is_stamina == true)
         {
-            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.2f, gm.stamina.localScale.y);
+            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.25f, gm.stamina.localScale.y);
             speed = 5.5f;
             is_roll = true;
             player_Animator.SetTrigger("Is_Roll");
@@ -149,11 +160,11 @@ public class Player : MonoBehaviour
 
     public void Run()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && gm.stamina.localScale.x > 0)
+        if (Input.GetKey(KeyCode.LeftShift) && gm.stamina.localScale.x > 0 && is_stamina == true)
         {
             is_Run = true;
             speed = 5.5f;
-            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.001f, gm.stamina.localScale.y); 
+            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.002f, gm.stamina.localScale.y); 
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
@@ -168,6 +179,32 @@ public class Player : MonoBehaviour
         {
             if(gm.stamina.localScale.x <= 1)
                 gm.stamina.localScale = new Vector2(gm.stamina.localScale.x + 0.001f, gm.stamina.localScale.y);
+        }
+    }
+
+    public void Stamina_Loading()
+    {
+        if(gm.stamina.localScale.x <= 0)
+        {
+            gm.stamina.gameObject.SetActive(false);
+
+            gm.stamina_loading.localScale = new Vector2(0f, gm.stamina_loading.localScale.y);
+            gm.stamina_loading.gameObject.SetActive(true);
+
+            is_stamina = false;
+        }
+    }
+
+    public void Stamina_Reload()
+    {
+        if (gm.stamina_loading.localScale.x <= 1)
+            gm.stamina_loading.localScale = new Vector2(gm.stamina_loading.localScale.x + 0.001f, gm.stamina_loading.localScale.y);
+
+        if (gm.stamina.localScale.x >= 1 && is_stamina == false)
+        {
+            gm.stamina.gameObject.SetActive(true);
+            gm.stamina_loading.gameObject.SetActive(false);
+            is_stamina = true;
         }
     }
 }
