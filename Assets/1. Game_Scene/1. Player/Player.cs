@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
 
     public float attack_next_Time;//어택 다음공격 쿨타임 (0.25초 이내면 한번 더 공격
     public int attack_Cnt;
-
     public bool is_roll;//구르고 있는지
     public float speed;//속도
 
@@ -33,11 +32,12 @@ public class Player : MonoBehaviour
 
     public void Roll()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) )
         {
             speed = 4.5f;
             is_roll = true;
             player_Animator.SetTrigger("Is_Roll");
+
         }
     }
     public void Roll_End()
@@ -55,6 +55,15 @@ public class Player : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && is_roll == false && attack_next_Time > 0.25f)
         {
+            Vector3 mouse_Point = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y ));
+            if(mouse_Point.x > gameObject.transform.position.x)
+            {
+                gameObject.transform.localScale = new Vector2(0.7f, 0.7f);
+            }
+            else if (mouse_Point.x < gameObject.transform.position.x)
+            {
+                gameObject.transform.localScale = new Vector2(-0.7f, 0.7f);
+            }
             attack_Cnt++;
 
             if(attack_Cnt > 3)
@@ -110,13 +119,13 @@ public class Player : MonoBehaviour
         }
 
         //좌우 반전
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D))//오른쪽 이동
         {
-            gameObject.transform.localScale = new Vector2(0.8f, 0.8f);
+            gameObject.transform.localScale = new Vector2(0.7f, 0.7f);
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A))//왼쪽 이동
         {
-            gameObject.transform.localScale = new Vector2(-0.8f, 0.8f);
+            gameObject.transform.localScale = new Vector2(-0.7f, 0.7f);
         }
     }
 }
