@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public Game_Manager gm;
+
     public Animator player_Animator;//애니메이션
 
     public float attack_next_Time;//어택 다음공격 쿨타임 (0.25초 이내면 한번 더 공격
     public int attack_Cnt;//콤보 공격 횟수
     public bool move_right;//오른쪽으로 가고 있는지
 
-
     public bool is_roll;//구르고 있는지
     public float speed;//속도
 
+    public bool is_Run;//뛰고 있다
 
     public float xMove;//좌우 입력
     public float yMove;//상하 입력
     // Start is called before the first frame update
     void Start()
     {
+        is_Run = false;
         speed = 3f;
     }
 
@@ -31,12 +34,16 @@ public class Player : MonoBehaviour
         Move();
 
         Attack();
+
+        Run();
+        Stamina();
     }
 
     public void Roll()
     {
-        if (Input.GetKeyDown(KeyCode.Space) )
+        if (Input.GetKeyDown(KeyCode.Space) && gm.stamina.localScale.x > 0.2f)
         {
+            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.2f, gm.stamina.localScale.y);
             speed = 5.5f;
             is_roll = true;
             player_Animator.SetTrigger("Is_Roll");
@@ -137,6 +144,30 @@ public class Player : MonoBehaviour
         {
             move_right = false;
             gameObject.transform.localScale = new Vector2(-0.7f, 0.7f);
+        }
+    }
+
+    public void Run()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && gm.stamina.localScale.x > 0)
+        {
+            is_Run = true;
+            speed = 5.5f;
+            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.001f, gm.stamina.localScale.y); 
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            is_Run = false;
+        }
+    }
+
+    public void Stamina()
+    {
+        if(is_Run == false)
+        {
+            if(gm.stamina.localScale.x <= 1)
+                gm.stamina.localScale = new Vector2(gm.stamina.localScale.x + 0.001f, gm.stamina.localScale.y);
         }
     }
 }
