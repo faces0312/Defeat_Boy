@@ -9,8 +9,10 @@ public class Player : MonoBehaviour
     public Animator player_Animator;//애니메이션
 
     //공격
+    public bool is_Attack;
     public float attack_next_Time;//어택 다음공격 쿨타임 (0.25초 이내면 한번 더 공격
     public int attack_Cnt;//콤보 공격 횟수
+    
     public bool move_right;//오른쪽으로 가고 있는지
 
     public float speed;//속도
@@ -29,6 +31,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        is_Attack = false;
         is_Run = false;
         is_stamina = true;
         speed = 3f;
@@ -73,6 +76,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && is_roll == false && attack_next_Time > 0.25f)
         {
+            is_Attack = true;
             speed = 0;
             Vector3 mouse_Point = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y ));
             if(mouse_Point.x > gameObject.transform.position.x)
@@ -102,8 +106,8 @@ public class Player : MonoBehaviour
     }
     public void Attack_End()
     {
-
-        if(move_right == true)
+        is_Attack = false;
+        if (move_right == true)
         {
             gameObject.transform.localScale = new Vector2(0.7f, 0.7f);
         }
@@ -160,7 +164,7 @@ public class Player : MonoBehaviour
 
     public void Run()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && gm.stamina.localScale.x > 0 && is_stamina == true)
+        if (Input.GetKey(KeyCode.LeftShift) && gm.stamina.localScale.x > 0 && is_stamina == true && is_Attack == false)
         {
             is_Run = true;
             speed = 5.5f;
