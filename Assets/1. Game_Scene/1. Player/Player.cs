@@ -174,6 +174,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             is_Run = false;
+            speed = 3f;
         }
     }
 
@@ -185,7 +186,6 @@ public class Player : MonoBehaviour
                 gm.stamina.localScale = new Vector2(gm.stamina.localScale.x + 0.001f, gm.stamina.localScale.y);
         }
     }
-
     public void Stamina_Loading()
     {
         if(gm.stamina.localScale.x <= 0)
@@ -198,7 +198,6 @@ public class Player : MonoBehaviour
             is_stamina = false;
         }
     }
-
     public void Stamina_Reload()
     {
         if (gm.stamina_loading.localScale.x <= 1)
@@ -210,5 +209,10 @@ public class Player : MonoBehaviour
             gm.stamina_loading.gameObject.SetActive(false);
             is_stamina = true;
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        
     }
 }
