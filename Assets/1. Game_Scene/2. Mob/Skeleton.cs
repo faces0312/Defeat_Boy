@@ -11,8 +11,10 @@ public class Skeleton : MonoBehaviour
     public GameObject attack_Col;
 
     public bool is_atk;
+    public bool attack_Load_Col;
     public float attack_CT;
 
+    public GameObject attack_Loading;
 
     public float hp;
     float speed;
@@ -34,24 +36,16 @@ public class Skeleton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(player.transform.position.x > transform.position.x)
+        if(player.transform.position.x > transform.position.x && is_atk == false)
         {
             gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
         }
-        else
+        else if (player.transform.position.x <= transform.position.x && is_atk == false)
         {
             gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
         }
 
-        
-        transform.position = Vector3.MoveTowards(transform.position, player.gameObject.transform.position, Time.deltaTime * speed);
-
-        /*if(is_atk == true)
-        {
-            speed = 0;
-        }*/
-
-        if(speed == 0)
+        if (speed == 0 || attack_Load_Col ==true)
         {
             if (attack_CT > 0)
             {
@@ -63,6 +57,10 @@ public class Skeleton : MonoBehaviour
                 attack_CT = 2f;
             }
         }
+
+
+        if (is_atk == false)
+            transform.position = Vector3.MoveTowards(transform.position, player.gameObject.transform.position, Time.deltaTime * speed);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -70,6 +68,7 @@ public class Skeleton : MonoBehaviour
         if (collision.tag == "Player")
         {
             skeleton_Animator.SetBool("Is_Idle", true);
+            attack_Load_Col = true;
             speed = 0;
         }
 
@@ -77,12 +76,10 @@ public class Skeleton : MonoBehaviour
         {
             skeleton_Animator.SetTrigger("Is_Dmg");
         }
-
         if (collision.tag == "Player_Attack2" && is_atk == false)
         {
             skeleton_Animator.SetTrigger("Is_Dmg");
         }
-
         if (collision.tag == "Player_Attack3" && is_atk == false)
         {
             skeleton_Animator.SetTrigger("Is_Dmg");
@@ -94,17 +91,22 @@ public class Skeleton : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
+            attack_Load_Col = false;
             skeleton_Animator.SetBool("Is_Idle", false);
-
             speed = 2.2f;
-
         }
     }
 
     public void Attack()
     {
+        attack_Loading.gameObject.SetActive(true);
         is_atk = true;
         speed = 0;
+    }
+
+    public void Attack_LoadingEnd()
+    {
+        attack_Loading.gameObject.SetActive(false);
     }
 
     public void Damage()
@@ -119,6 +121,7 @@ public class Skeleton : MonoBehaviour
 
     public void Attack_End()
     {
+        speed = 2.2f;
         is_atk = false;
     }
 }

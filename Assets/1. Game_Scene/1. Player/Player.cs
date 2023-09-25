@@ -35,6 +35,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        move_right = true;
         is_Attack = false;
         is_Run = false;
         is_stamina = true;
