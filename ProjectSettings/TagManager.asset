@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Skeleton_Attack
+  - Player_Invi
+  - Player_Attack1
+  - Player_Attack2
+  - Player_Attack3
   layers:
   - Default
   - TransparentFX
@@ -11,7 +16,7 @@ TagManager:
   - Player
   - Water
   - UI
-  - 
+  - Mob_Leg
   - 
   - 
   - 

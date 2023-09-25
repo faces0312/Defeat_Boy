@@ -12,19 +12,12 @@ public class Game_Manager : MonoBehaviour
     public RectTransform stamina;
     public RectTransform stamina_loading;
 
+    public RectTransform hp;
+
+
     private void Awake()
     {
         gm = this;
     }
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
