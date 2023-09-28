@@ -11,7 +11,6 @@ public class Skeleton_Recog : MonoBehaviour
         if(collision.tag == "Player")
         {
             Debug.Log("인식 설정");
-            skeleton.CancelInvoke();
             skeleton.player_Recog = true;
         }
     }
@@ -21,7 +20,7 @@ public class Skeleton_Recog : MonoBehaviour
         if (collision.tag == "Player")
         {
             Debug.Log("인식 해제");
-            skeleton.Think_Move();
+            //skeleton.Think_Move();
             skeleton.player_Recog = false;
         }
     }

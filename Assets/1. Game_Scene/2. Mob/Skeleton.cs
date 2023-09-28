@@ -25,8 +25,10 @@ public class Skeleton : MonoBehaviour
 
     public float hp;
     public float speed;
+
+    public float next_Time;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         hp = 5;
 
@@ -100,7 +102,7 @@ public class Skeleton : MonoBehaviour
         {
             nextMove *= -1;
             CancelInvoke();
-            Invoke("Think_Move", 3f);
+            Invoke("Think_Move", 1.5f);
         }
     }
     //다음 이동
@@ -108,7 +110,7 @@ public class Skeleton : MonoBehaviour
     {
         nextMove = Random.Range(-1, 2);
 
-        float next_Time = Random.Range(2f, 5f);
+        next_Time = Random.Range(2f, 5f);
         Invoke("Think_Move", next_Time);
     }
 
@@ -139,7 +141,7 @@ public class Skeleton : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag == "Player" || collision.tag == "Player_Invi")
         {
             attack_Load_Col = false;
             skeleton_Animator.SetBool("Is_Idle", false);
@@ -161,8 +163,8 @@ public class Skeleton : MonoBehaviour
 
     public void Damage()
     {
-        Attack_LoadingEnd();
-        is_atk = false;
+        /*Attack_LoadingEnd();
+        is_atk = false;*/
 
         attack_Col.gameObject.SetActive(true);
         Invoke("Dis_Damage", 0.1f);
@@ -170,10 +172,7 @@ public class Skeleton : MonoBehaviour
     private void Dis_Damage()
     {
         attack_Col.gameObject.SetActive(false);
-    }
 
-    public void Attack_End()
-    {
         speed = 75f;
         is_atk = false;
     }
