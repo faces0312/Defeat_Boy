@@ -33,7 +33,7 @@ public class Skeleton : MonoBehaviour
         player_Recog = false;
 
         is_atk = false;
-        speed = 50f;
+        speed = 75f;
         attack_CT = 1f;
 
 
@@ -48,29 +48,6 @@ public class Skeleton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(player_Recog == true)
-        {
-            if (player.transform.position.x > transform.position.x && is_atk == false)
-            {
-                gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
-            }
-            else if (player.transform.position.x <= transform.position.x && is_atk == false)
-            {
-                gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
-            }
-        }
-        else
-        {
-            if(nextMove == 1)
-            {
-                gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
-            }
-            else if(nextMove == -1)
-            {
-                gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
-            }
-        }
-
         if (speed == 0 || attack_Load_Col ==true)
         {
             if (attack_CT > 0)
@@ -87,11 +64,35 @@ public class Skeleton : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //기본 이동
-        mob_Rigid.velocity = new Vector2(nextMove * Time.deltaTime * speed, mob_Rigid.velocity.y);
+        if (player_Recog == true)
+        {
+            if (player.transform.position.x > transform.position.x && is_atk == false)
+            {
+                gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
+                mob_Rigid.velocity = new Vector2(Time.deltaTime * speed, mob_Rigid.velocity.y);
+            }
+            else if (player.transform.position.x <= transform.position.x && is_atk == false)
+            {
+                gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
+                mob_Rigid.velocity = new Vector2(-1 * Time.deltaTime * speed, mob_Rigid.velocity.y);
+            }
+        }
+        else
+        {
+            if (nextMove == 1)
+            {
+                gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
+            }
+            else if (nextMove == -1)
+            {
+                gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
+            }
+            //기본 이동
+            mob_Rigid.velocity = new Vector2(nextMove * Time.deltaTime * speed, mob_Rigid.velocity.y);
+        }
 
         //낭떠러지 체크
-        Vector2 frontVec = new Vector2(mob_Rigid.position.x + nextMove * 0.2f, mob_Rigid.position.y);
+        Vector2 frontVec = new Vector2(mob_Rigid.position.x + nextMove * 0.25f, mob_Rigid.position.y);
         Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Ground"));
 
@@ -103,7 +104,7 @@ public class Skeleton : MonoBehaviour
         }
     }
     //다음 이동
-    void Think_Move()
+    public void Think_Move()
     {
         nextMove = Random.Range(-1, 2);
 
@@ -142,7 +143,7 @@ public class Skeleton : MonoBehaviour
         {
             attack_Load_Col = false;
             skeleton_Animator.SetBool("Is_Idle", false);
-            speed = 50f;
+            speed = 75f;
         }
     }
 
@@ -173,7 +174,7 @@ public class Skeleton : MonoBehaviour
 
     public void Attack_End()
     {
-        speed = 50f;
+        speed = 75f;
         is_atk = false;
     }
 }
