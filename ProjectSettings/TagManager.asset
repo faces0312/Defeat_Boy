@@ -9,6 +9,7 @@ TagManager:
   - Player_Attack1
   - Player_Attack2
   - Player_Attack3
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - Water
   - UI
   - Mob_Leg
-  - 
+  - Ground
   - 
   - 
   - 

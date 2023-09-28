@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 
     public Animator player_Animator;//애니메이션
 
+    public Rigidbody2D player_Rigid;
     //공격
     public GameObject attack1;
     public GameObject attack2;
@@ -19,7 +20,9 @@ public class Player : MonoBehaviour
     public bool move_right;//오른쪽으로 가고 있는지
 
     public float speed;//속도
-
+    //Jump
+    public float jump_Power;
+    public bool is_Jump;
     //Roll
     public bool is_roll;//구르고 있는지
     //Run
@@ -40,7 +43,11 @@ public class Player : MonoBehaviour
         is_Run = false;
         is_stamina = true;
         is_Dmg = false;
+        is_Jump = true;
+        
         speed = 3f;
+        jump_Power = 10f;
+
     }
 
     // Update is called once per frame
@@ -54,14 +61,27 @@ public class Player : MonoBehaviour
 
         Run();
 
+        Jump();
+
         Stamina_Reload();
         Stamina_Loading();
         Stamina();
     }
 
+    public void Jump()
+    {
+        if(Input.GetKeyDown(KeyCode.K) && is_Jump == true)
+        {
+            player_Animator.SetBool("Is_Jump", true);
+            player_Rigid.AddForce(Vector2.up * jump_Power, ForceMode2D.Impulse);
+            is_Jump = false;
+        }
+    }
+
+
     public void Roll()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && gm.stamina.localScale.x >= 0.2f && is_stamina == true)
+        if (Input.GetKeyDown(KeyCode.Space) && gm.stamina.localScale.x >= 0.2f && is_stamina == true && is_Jump == true)
         {
             is_Dmg = false;
             gameObject.tag = "Player_Invi";
@@ -83,7 +103,7 @@ public class Player : MonoBehaviour
     {
         attack_next_Time += Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.J) && is_roll == false && attack_next_Time > 0.25f && is_Dmg == false)
+        if (Input.GetKeyDown(KeyCode.J) && is_roll == false && attack_next_Time > 0.25f && is_Dmg == false && is_Jump == true)
         {
             is_Attack = true;
             speed = 0;
@@ -260,6 +280,15 @@ public class Player : MonoBehaviour
             player_Animator.SetTrigger("Dmg");
             gameObject.tag = "Player_Invi";
             gm.hp.localScale = new Vector2(gm.hp.localScale.x - 0.2f, gm.hp.localScale.y);
+        }
+
+        if(collision.tag == "Ground")
+        {
+            is_Jump = true;
+            speed = 3f;
+            is_Attack = false;
+            is_roll = false;
+            player_Animator.SetBool("Is_Jump", false);
         }
     }
 
