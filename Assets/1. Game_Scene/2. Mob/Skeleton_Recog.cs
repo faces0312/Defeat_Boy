@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Skeleton_Recog : MonoBehaviour
 {
+    //캐릭터 인식
     public Skeleton skeleton;
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Skeleton : MonoBehaviour
 {
-    public Player player;
 
     //움직임
     public Rigidbody2D mob_Rigid;
@@ -30,7 +29,7 @@ public class Skeleton : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        hp = 5;
+        hp = 8;
 
         player_Recog = false;
 
@@ -45,11 +44,17 @@ public class Skeleton : MonoBehaviour
     private void OnEnable()
     {
         attack_Col.gameObject.SetActive(false);
+        attack_Loading.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(hp <= 0)
+        {
+            gameObject.SetActive(false);
+        }
+
         if (speed == 0 || attack_Load_Col ==true)
         {
             if (attack_CT > 0)
@@ -66,43 +71,51 @@ public class Skeleton : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (player_Recog == true)
-        {
-            if (player.transform.position.x > transform.position.x && is_atk == false)
-            {
-                gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
-                mob_Rigid.velocity = new Vector2(Time.deltaTime * speed, mob_Rigid.velocity.y);
-            }
-            else if (player.transform.position.x <= transform.position.x && is_atk == false)
-            {
-                gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
-                mob_Rigid.velocity = new Vector2(-1 * Time.deltaTime * speed, mob_Rigid.velocity.y);
-            }
-        }
-        else
-        {
-            if (nextMove == 1)
-            {
-                gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
-            }
-            else if (nextMove == -1)
-            {
-                gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
-            }
-            //기본 이동
-            mob_Rigid.velocity = new Vector2(nextMove * Time.deltaTime * speed, mob_Rigid.velocity.y);
-        }
-
         //낭떠러지 체크
         Vector2 frontVec = new Vector2(mob_Rigid.position.x + nextMove * 0.25f, mob_Rigid.position.y);
         Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Ground"));
 
-        if(rayHit.collider == null)
+        if (rayHit.collider == null)
         {
             nextMove *= -1;
-            CancelInvoke();
+            CancelInvoke("Think_Move");
             Invoke("Think_Move", 1.5f);
+        }
+
+        if (player_Recog == true)
+        {
+            if (Player.player.gameObject.transform.position.x > transform.position.x && is_atk == false)
+            {
+                RaycastHit2D raycastHit = Physics2D.Raycast(new Vector2(mob_Rigid.position.x + 0.25f, mob_Rigid.position.y), Vector3.down, 1, LayerMask.GetMask("Ground"));
+                gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
+                if(raycastHit.collider == null)
+                    mob_Rigid.velocity = new Vector2(0, mob_Rigid.velocity.y);
+                else
+                    mob_Rigid.velocity = new Vector2(Time.deltaTime * speed, mob_Rigid.velocity.y);
+            }
+            else if (Player.player.gameObject.transform.position.x <= transform.position.x && is_atk == false)
+            {
+                RaycastHit2D raycastHit = Physics2D.Raycast(new Vector2(mob_Rigid.position.x - 0.25f, mob_Rigid.position.y), Vector3.down, 1, LayerMask.GetMask("Ground"));
+                gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
+                if (raycastHit.collider == null)
+                    mob_Rigid.velocity = new Vector2(0, mob_Rigid.velocity.y);
+                else
+                    mob_Rigid.velocity = new Vector2(-1 * Time.deltaTime * speed, mob_Rigid.velocity.y);
+            }
+        }
+        else
+        {
+            if (nextMove == 1 && is_atk == false)
+            {
+                gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
+            }
+            else if (nextMove == -1 && is_atk == false)
+            {
+                gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
+            }
+            //기본 이동
+            mob_Rigid.velocity = new Vector2(nextMove * Time.deltaTime * speed, mob_Rigid.velocity.y);
         }
     }
     //다음 이동
@@ -117,35 +130,24 @@ public class Skeleton : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
-        {
-            skeleton_Animator.SetBool("Is_Idle", true);
-            attack_Load_Col = true;
-            speed = 0;
-        }
-
+        
         if(collision.tag == "Player_Attack1" && is_atk == false)
         {
             skeleton_Animator.SetTrigger("Is_Dmg");
+            hp -= 1;
+            Hurt();
         }
         if (collision.tag == "Player_Attack2" && is_atk == false)
         {
             skeleton_Animator.SetTrigger("Is_Dmg");
+            hp -= 1;
+            Hurt();
         }
         if (collision.tag == "Player_Attack3" && is_atk == false)
         {
             skeleton_Animator.SetTrigger("Is_Dmg");
-        }
-    }
-
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.tag == "Player" || collision.tag == "Player_Invi")
-        {
-            attack_Load_Col = false;
-            skeleton_Animator.SetBool("Is_Idle", false);
-            speed = 75f;
+            hp -= 3;
+            Hurt();
         }
     }
 
@@ -154,11 +156,13 @@ public class Skeleton : MonoBehaviour
         attack_Loading.gameObject.SetActive(true);
         is_atk = true;
         speed = 0;
+
     }
 
     public void Attack_LoadingEnd()
     {
         attack_Loading.gameObject.SetActive(false);
+
     }
 
     public void Damage()
@@ -167,7 +171,7 @@ public class Skeleton : MonoBehaviour
         is_atk = false;*/
 
         attack_Col.gameObject.SetActive(true);
-        Invoke("Dis_Damage", 0.1f);
+        Invoke("Dis_Damage", 0.17f);
     }
     private void Dis_Damage()
     {
@@ -176,4 +180,15 @@ public class Skeleton : MonoBehaviour
         speed = 75f;
         is_atk = false;
     }
+
+    public void Hurt()
+    {
+        speed = 0f;
+        Invoke("Dis_Hurt", 0.15f);
+    }
+    public void Dis_Hurt()
+    {
+        speed = 75f;
+    }
+
 }

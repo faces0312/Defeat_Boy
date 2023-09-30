@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public static Player player;
+
     public Game_Manager gm;
 
     public Animator player_Animator;//애니메이션
 
     public Rigidbody2D player_Rigid;
+    public CapsuleCollider2D playerCollider;
+
     //공격
     public GameObject attack1;
     public GameObject attack2;
@@ -35,6 +39,13 @@ public class Player : MonoBehaviour
 
     public float xMove;//좌우 입력
     public float yMove;//상하 입력
+
+
+    private void Awake()
+    {
+        player = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -66,15 +77,29 @@ public class Player : MonoBehaviour
         Stamina_Reload();
         Stamina_Loading();
         Stamina();
+
+        
     }
 
     public void Jump()
     {
-        if(Input.GetKeyDown(KeyCode.K) && is_Jump == true)
+        
+        if (Input.GetKey(KeyCode.S) && Input.GetKeyDown(KeyCode.K))
         {
+                playerCollider.isTrigger = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.K) && is_Jump == true)
+        {
+
             player_Animator.SetBool("Is_Jump", true);
             player_Rigid.AddForce(Vector2.up * jump_Power, ForceMode2D.Impulse);
             is_Jump = false;
+
+            gameObject.tag = "Player";
+            speed = 3f;
+            is_roll = false;
+
+            is_Dmg = false;
         }
     }
 
@@ -90,12 +115,14 @@ public class Player : MonoBehaviour
             is_roll = true;
             player_Animator.SetTrigger("Is_Roll");
 
+
         }
     }
     public void Roll_End()
     {
         gameObject.tag = "Player";
         speed = 3f;
+        is_Attack = false;
         is_roll = false;
     }
 
@@ -201,7 +228,7 @@ public class Player : MonoBehaviour
         }*/
 
         //움직임 애니메이션
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A))
         {
             player_Animator.SetBool("Is_Run", true);
         }
@@ -231,8 +258,7 @@ public class Player : MonoBehaviour
             speed = 5.5f;
             gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.002f, gm.stamina.localScale.y); 
         }
-
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+        else if (Input.GetKeyUp(KeyCode.LeftShift) || gm.stamina.localScale.x <= 0)
         {
             is_Run = false;
             speed = 3f;
@@ -282,8 +308,9 @@ public class Player : MonoBehaviour
             gm.hp.localScale = new Vector2(gm.hp.localScale.x - 0.2f, gm.hp.localScale.y);
         }
 
-        if(collision.tag == "Ground")
+        if(collision.tag == "Ground" || collision.gameObject.layer == 7)
         {
+            playerCollider.isTrigger = false;
             is_Jump = true;
             speed = 3f;
             is_Attack = false;
@@ -298,4 +325,5 @@ public class Player : MonoBehaviour
         is_Dmg = false;
         speed = 3f;
     }
+
 }
