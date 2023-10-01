@@ -121,6 +121,14 @@ public class Skeleton : MonoBehaviour
     public void Think_Move()
     {
         nextMove = Random.Range(-1, 2);
+        
+        if(nextMove == 0 && player_Recog == false)
+        {
+            skeleton_Animator.SetBool("Is_Idle", true);
+        }
+        else
+            skeleton_Animator.SetBool("Is_Idle", false);
+
 
         next_Time = Random.Range(2f, 5f);
         Invoke("Think_Move", next_Time);
