@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     //Jump
     public float jump_Power;
     public bool is_Jump;
+    public bool is_DownJump;//아래점프가 가능한지
     //Roll
     public bool is_roll;//구르고 있는지
     //Run
@@ -55,7 +56,8 @@ public class Player : MonoBehaviour
         is_stamina = true;
         is_Dmg = false;
         is_Jump = true;
-        
+        is_DownJump = false;
+
         speed = 3f;
         jump_Power = 10f;
 
@@ -86,6 +88,7 @@ public class Player : MonoBehaviour
         
         if (Input.GetKey(KeyCode.S) && Input.GetKeyDown(KeyCode.K))
         {
+            if(is_DownJump == true)
                 playerCollider.isTrigger = true;
         }
         else if (Input.GetKeyDown(KeyCode.K) && is_Jump == true)
@@ -308,7 +311,7 @@ public class Player : MonoBehaviour
             gm.hp.localScale = new Vector2(gm.hp.localScale.x - 0.2f, gm.hp.localScale.y);
         }
 
-        if(collision.tag == "Ground" || collision.gameObject.layer == 7)
+        if(collision.tag == "Ground" || collision.gameObject.layer == 7 || collision.tag == "Ground_Wall")
         {
             playerCollider.isTrigger = false;
             is_Jump = true;
@@ -316,6 +319,16 @@ public class Player : MonoBehaviour
             is_Attack = false;
             is_roll = false;
             player_Animator.SetBool("Is_Jump", false);
+        }
+
+        if(collision.tag == "Ground_Wall")
+        {
+            is_DownJump = true;
+        }
+
+        if(collision.tag == "Ground")
+        {
+            is_DownJump = false;
         }
     }
 

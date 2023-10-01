@@ -10,6 +10,7 @@ TagManager:
   - Player_Attack2
   - Player_Attack3
   - Ground
+  - Ground_Wall
   layers:
   - Default
   - TransparentFX
