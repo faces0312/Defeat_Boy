@@ -29,7 +29,7 @@ public class Skeleton : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        hp = 8;
+        hp = 12;
 
         player_Recog = false;
 
@@ -70,20 +70,7 @@ public class Skeleton : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
-        //낭떠러지 체크
-        Vector2 frontVec = new Vector2(mob_Rigid.position.x + nextMove * 0.25f, mob_Rigid.position.y);
-        Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
-        RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Ground"));
-
-        if (rayHit.collider == null)
-        {
-            nextMove *= -1;
-            CancelInvoke("Think_Move");
-            Invoke("Think_Move", 1.5f);
-        }
-
-        if (player_Recog == true)
+    {if (player_Recog == true)
         {
             if (Player.player.gameObject.transform.position.x > transform.position.x && is_atk == false)
             {
@@ -116,6 +103,18 @@ public class Skeleton : MonoBehaviour
             }
             //기본 이동
             mob_Rigid.velocity = new Vector2(nextMove * Time.deltaTime * speed, mob_Rigid.velocity.y);
+
+            //낭떠러지 체크
+            Vector2 frontVec = new Vector2(mob_Rigid.position.x + nextMove * 0.25f, mob_Rigid.position.y);
+            Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
+            RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Ground"));
+
+            if (rayHit.collider == null)
+            {
+                nextMove *= -1;
+                CancelInvoke("Think_Move");
+                Invoke("Think_Move", 1.5f);
+            }
         }
     }
     //다음 이동
