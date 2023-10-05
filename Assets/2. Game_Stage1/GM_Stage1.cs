@@ -17,4 +17,12 @@ public class GM_Stage1 : MonoBehaviour
     {
         gm = this;
     }
+
+    private void Update()
+    {
+        if(hp.localScale.x <= 0)
+        {
+            Time.timeScale = 0;
+        }
+    }
 }
