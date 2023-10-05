@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Skeleton : MonoBehaviour
+public class Skeleton_Stage1 : MonoBehaviour
 {
-
     //¿òÁ÷ÀÓ
     public Rigidbody2D mob_Rigid;
     public int nextMove;
@@ -50,18 +49,18 @@ public class Skeleton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(hp <= 0)
+        if (hp <= 0)
         {
             gameObject.SetActive(false);
         }
 
-        if (speed == 0 || attack_Load_Col ==true)
+        if (speed == 0 || attack_Load_Col == true)
         {
             if (attack_CT > 0)
             {
                 attack_CT -= Time.deltaTime;
             }
-            else if(attack_CT <= 0)
+            else if (attack_CT <= 0)
             {
                 skeleton_Animator.SetTrigger("Is_Atk");
                 attack_CT = 2f;
@@ -73,16 +72,16 @@ public class Skeleton : MonoBehaviour
     {
         if (player_Recog == true)
         {
-            if (Player.player.gameObject.transform.position.x > transform.position.x && is_atk == false)
+            if (Player_Stage1.player.gameObject.transform.position.x > transform.position.x && is_atk == false)
             {
                 RaycastHit2D raycastHit = Physics2D.Raycast(new Vector2(mob_Rigid.position.x + 0.25f, mob_Rigid.position.y), Vector3.down, 1, LayerMask.GetMask("Ground"));
                 gameObject.transform.localScale = new Vector3(1.8f, 1.8f);
-                if(raycastHit.collider == null)
+                if (raycastHit.collider == null)
                     mob_Rigid.velocity = new Vector2(0, mob_Rigid.velocity.y);
                 else
                     mob_Rigid.velocity = new Vector2(Time.deltaTime * speed, mob_Rigid.velocity.y);
             }
-            else if (Player.player.gameObject.transform.position.x <= transform.position.x && is_atk == false)
+            else if (Player_Stage1.player.gameObject.transform.position.x <= transform.position.x && is_atk == false)
             {
                 RaycastHit2D raycastHit = Physics2D.Raycast(new Vector2(mob_Rigid.position.x - 0.25f, mob_Rigid.position.y), Vector3.down, 1, LayerMask.GetMask("Ground"));
                 gameObject.transform.localScale = new Vector3(-1.8f, 1.8f);
@@ -122,8 +121,8 @@ public class Skeleton : MonoBehaviour
     public void Think_Move()
     {
         nextMove = Random.Range(-1, 2);
-        
-        if(nextMove == 0 && player_Recog == false)
+
+        if (nextMove == 0 && player_Recog == false)
         {
             skeleton_Animator.SetBool("Is_Idle", true);
         }
@@ -138,8 +137,8 @@ public class Skeleton : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
-        if(collision.tag == "Player_Attack1" && is_atk == false)
+
+        if (collision.tag == "Player_Attack1" && is_atk == false)
         {
             skeleton_Animator.SetTrigger("Is_Dmg");
             hp -= 1;
@@ -198,5 +197,4 @@ public class Skeleton : MonoBehaviour
     {
         speed = 75f;
     }
-
 }

@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player_Stage1 : MonoBehaviour
 {
-    public static Player player;
+    public static Player_Stage1 player;
 
-    public Game_Manager gm;
+    public GM_Stage1 gm;
 
     public Animator player_Animator;//애니메이션
 
@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     public bool is_Attack;
     public float attack_next_Time;//어택 다음공격 쿨타임 (0.25초 이내면 한번 더 공격
     public int attack_Cnt;//콤보 공격 횟수
-    
+
     public bool move_right;//오른쪽으로 가고 있는지
 
     public float speed;//속도
@@ -80,23 +80,21 @@ public class Player : MonoBehaviour
         Stamina_Loading();
         Stamina();
 
-        
+
     }
 
     public void Jump()
     {
-        
+
         if (Input.GetKey(KeyCode.S) && Input.GetKeyDown(KeyCode.K))
         {
-            if(is_DownJump == true)
+            if (is_DownJump == true)
                 playerCollider.isTrigger = true;
         }
         else if (Input.GetKeyDown(KeyCode.K) && is_Jump == true)
         {
 
             player_Animator.SetBool("Is_Jump", true);
-
-            player_Rigid.velocity = Vector3.zero;
             player_Rigid.AddForce(Vector2.up * jump_Power, ForceMode2D.Impulse);
             is_Jump = false;
 
@@ -151,7 +149,7 @@ public class Player : MonoBehaviour
 
             attack_Cnt++;
 
-            if(attack_Cnt > 3)
+            if (attack_Cnt > 3)
             {
                 attack_Cnt = 1;
             }
@@ -261,7 +259,7 @@ public class Player : MonoBehaviour
         {
             is_Run = true;
             speed = 5.5f;
-            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.002f, gm.stamina.localScale.y); 
+            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.0015f, gm.stamina.localScale.y);
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift) || gm.stamina.localScale.x <= 0)
         {
@@ -272,15 +270,15 @@ public class Player : MonoBehaviour
 
     public void Stamina()
     {
-        if(is_Run == false)
+        if (is_Run == false)
         {
-            if(gm.stamina.localScale.x <= 1)
-                gm.stamina.localScale = new Vector2(gm.stamina.localScale.x + 0.001f, gm.stamina.localScale.y);
+            if (gm.stamina.localScale.x <= 1)
+                gm.stamina.localScale = new Vector2(gm.stamina.localScale.x + 0.0013f, gm.stamina.localScale.y);
         }
     }
     public void Stamina_Loading()
     {
-        if(gm.stamina.localScale.x <= 0)
+        if (gm.stamina.localScale.x <= 0)
         {
             gm.stamina.gameObject.SetActive(false);
 
@@ -295,7 +293,7 @@ public class Player : MonoBehaviour
         if (gm.stamina_loading.localScale.x <= 1)
             gm.stamina_loading.localScale = new Vector2(gm.stamina_loading.localScale.x + 0.001f, gm.stamina_loading.localScale.y);
 
-        if (gm.stamina.localScale.x >= 1 && is_stamina == false)
+        if (gm.stamina.localScale.x >= 1 && is_stamina == false && gm.stamina_loading.localScale.x >= 1)
         {
             gm.stamina.gameObject.SetActive(true);
             gm.stamina_loading.gameObject.SetActive(false);
@@ -305,7 +303,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Skeleton_Attack" && gameObject.tag == "Player")
+        if (collision.tag == "Skeleton_Attack" && gameObject.tag == "Player")
         {
             is_Dmg = true;
             player_Animator.SetTrigger("Dmg");
@@ -313,7 +311,7 @@ public class Player : MonoBehaviour
             gm.hp.localScale = new Vector2(gm.hp.localScale.x - 0.2f, gm.hp.localScale.y);
         }
 
-        if(collision.tag == "Ground" || collision.gameObject.layer == 7 || collision.tag == "Ground_Wall")
+        if (collision.tag == "Ground" || collision.gameObject.layer == 7 || collision.tag == "Ground_Wall")
         {
             playerCollider.isTrigger = false;
             is_Jump = true;
@@ -323,12 +321,12 @@ public class Player : MonoBehaviour
             player_Animator.SetBool("Is_Jump", false);
         }
 
-        if(collision.tag == "Ground_Wall")
+        if (collision.tag == "Ground_Wall")
         {
             is_DownJump = true;
         }
 
-        if(collision.tag == "Ground")
+        if (collision.tag == "Ground")
         {
             is_DownJump = false;
         }
@@ -340,5 +338,4 @@ public class Player : MonoBehaviour
         is_Dmg = false;
         speed = 3f;
     }
-
 }

@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-
-public class Game_Manager : MonoBehaviour
+public class GM_Stage1 : MonoBehaviour
 {
-    static Game_Manager gm;
-    public Player player;
+    static GM_Stage1 gm;
+    public Player_Stage1 player;
 
     public RectTransform stamina;
     public RectTransform stamina_loading;
@@ -17,8 +15,6 @@ public class Game_Manager : MonoBehaviour
 
     private void Awake()
     {
-        Time.timeScale = 1;
         gm = this;
     }
-
 }
