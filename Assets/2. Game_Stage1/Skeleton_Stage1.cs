@@ -28,7 +28,7 @@ public class Skeleton_Stage1 : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        hp = 12;
+        hp = 8;
 
         player_Recog = false;
 
@@ -51,6 +51,7 @@ public class Skeleton_Stage1 : MonoBehaviour
     {
         if (hp <= 0)
         {
+            GM_Stage1.gm.mob_Cnt++;
             gameObject.SetActive(false);
         }
 

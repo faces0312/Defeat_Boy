@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GM_Stage1 : MonoBehaviour
 {
-    static GM_Stage1 gm;
+    public static GM_Stage1 gm;
     public Player_Stage1 player;
 
     public RectTransform stamina;
@@ -12,10 +12,14 @@ public class GM_Stage1 : MonoBehaviour
 
     public RectTransform hp;
 
+    public int mob_Cnt;
+    public GameObject first_Area;
+
 
     private void Awake()
     {
         gm = this;
+        mob_Cnt = 0;
     }
 
     private void Update()
@@ -23,6 +27,11 @@ public class GM_Stage1 : MonoBehaviour
         if(hp.localScale.x <= 0)
         {
             Time.timeScale = 0;
+        }
+
+        if(mob_Cnt >= 5)
+        {
+            first_Area.gameObject.SetActive(false);
         }
     }
 }

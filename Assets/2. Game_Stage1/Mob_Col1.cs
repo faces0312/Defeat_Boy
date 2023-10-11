@@ -6,6 +6,7 @@ public class Mob_Col1 : MonoBehaviour
 {
     public GameObject mob;
 
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == "Player")
