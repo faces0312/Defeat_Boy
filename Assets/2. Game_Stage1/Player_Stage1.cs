@@ -25,6 +25,7 @@ public class Player_Stage1 : MonoBehaviour
 
     public float speed;//속도
     //Jump
+    public int jump_Cnt;
     public float jump_Power;
     public bool is_Jump;
     public bool is_DownJump;//아래점프가 가능한지
@@ -50,6 +51,8 @@ public class Player_Stage1 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player_Rigid.gravityScale = 3;
+
         move_right = true;
         is_Attack = false;
         is_Run = false;
@@ -59,6 +62,7 @@ public class Player_Stage1 : MonoBehaviour
         is_DownJump = false;
 
         speed = 3f;
+        jump_Cnt = 0;
         jump_Power = 11f;
 
     }
@@ -94,22 +98,46 @@ public class Player_Stage1 : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.K) && is_Jump == true)
         {
 
-            player_Animator.SetBool("Is_Jump", true);
-            player_Rigid.AddForce(Vector2.up * jump_Power, ForceMode2D.Impulse);
-            is_Jump = false;
+            if (jump_Cnt < 1)
+            {
+                player_Animator.SetBool("Is_Jump", true);
 
-            gameObject.tag = "Player";
-            speed = 3f;
-            is_roll = false;
+                player_Rigid.velocity = Vector3.zero;
+                player_Rigid.AddForce(Vector2.up * jump_Power, ForceMode2D.Impulse);
 
-            is_Dmg = false;
+
+                gameObject.tag = "Player";
+                speed = 3f;
+                is_roll = false;
+
+                is_Dmg = false;
+
+                jump_Cnt++;
+            }
+            else
+            {
+                player_Animator.SetBool("Is_Jump", true);
+
+                player_Rigid.velocity = Vector3.zero;
+                player_Rigid.AddForce(Vector2.up * jump_Power, ForceMode2D.Impulse);
+
+
+                gameObject.tag = "Player";
+                speed = 3f;
+                is_roll = false;
+
+                is_Dmg = false;
+
+                jump_Cnt++;
+                is_Jump = false;
+            }
         }
     }
 
 
     public void Roll()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && gm.stamina.localScale.x >= 0.2f && is_stamina == true && is_Jump == true)
+        if (Input.GetKeyDown(KeyCode.Space) && gm.stamina.localScale.x >= 0.2f && is_stamina == true && jump_Cnt == 0)
         {
             is_Dmg = false;
             gameObject.tag = "Player_Invi";
@@ -117,8 +145,6 @@ public class Player_Stage1 : MonoBehaviour
             speed = 5.5f;
             is_roll = true;
             player_Animator.SetTrigger("Is_Roll");
-
-
         }
     }
     public void Roll_End()
@@ -133,7 +159,20 @@ public class Player_Stage1 : MonoBehaviour
     {
         attack_next_Time += Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.J) && is_roll == false && attack_next_Time > 0.25f && is_Dmg == false && is_Jump == true)
+        if (Input.GetKeyDown(KeyCode.J) && is_roll == false && attack_next_Time > 0.25f && is_Dmg == false && jump_Cnt > 0)
+        {
+            player_Rigid.gravityScale = 5.5f;
+
+            is_Attack = true;
+            speed = 0;
+
+            player_Animator.SetBool("Is_Jump", false);
+            player_Animator.SetTrigger("Attack3");
+
+            // Reset Timer and Direction
+            attack_next_Time = 0.0f;
+        }
+        else if (Input.GetKeyDown(KeyCode.J) && is_roll == false && attack_next_Time > 0.25f && is_Dmg == false && is_Jump == true)
         {
             is_Attack = true;
             speed = 0;
@@ -190,7 +229,7 @@ public class Player_Stage1 : MonoBehaviour
     public void Attack3()
     {
         attack3.gameObject.SetActive(true);
-        Invoke("Dis_Attack3", 0.03f);
+        Invoke("Dis_Attack3", 0.07f);
     }
 
     public void Dis_Attack1()
@@ -259,7 +298,7 @@ public class Player_Stage1 : MonoBehaviour
         {
             is_Run = true;
             speed = 5.5f;
-            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.0015f, gm.stamina.localScale.y);
+            gm.stamina.localScale = new Vector2(gm.stamina.localScale.x - 0.002f, gm.stamina.localScale.y);
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift) || gm.stamina.localScale.x <= 0)
         {
@@ -273,7 +312,7 @@ public class Player_Stage1 : MonoBehaviour
         if (is_Run == false)
         {
             if (gm.stamina.localScale.x <= 1)
-                gm.stamina.localScale = new Vector2(gm.stamina.localScale.x + 0.0013f, gm.stamina.localScale.y);
+                gm.stamina.localScale = new Vector2(gm.stamina.localScale.x + 0.001f, gm.stamina.localScale.y);
         }
     }
     public void Stamina_Loading()
@@ -293,7 +332,7 @@ public class Player_Stage1 : MonoBehaviour
         if (gm.stamina_loading.localScale.x <= 1)
             gm.stamina_loading.localScale = new Vector2(gm.stamina_loading.localScale.x + 0.001f, gm.stamina_loading.localScale.y);
 
-        if (gm.stamina.localScale.x >= 1 && is_stamina == false && gm.stamina_loading.localScale.x >= 1)
+        if (gm.stamina.localScale.x >= 1 && is_stamina == false)
         {
             gm.stamina.gameObject.SetActive(true);
             gm.stamina_loading.gameObject.SetActive(false);
@@ -309,16 +348,20 @@ public class Player_Stage1 : MonoBehaviour
             player_Animator.SetTrigger("Dmg");
             gameObject.tag = "Player_Invi";
             gm.hp.localScale = new Vector2(gm.hp.localScale.x - 0.2f, gm.hp.localScale.y);
+            Invoke("Dmg_End", 0.03f);
         }
 
         if (collision.tag == "Ground" || collision.gameObject.layer == 7 || collision.tag == "Ground_Wall")
         {
+            player_Rigid.gravityScale = 3;
             playerCollider.isTrigger = false;
             is_Jump = true;
             speed = 3f;
             is_Attack = false;
             is_roll = false;
             player_Animator.SetBool("Is_Jump", false);
+
+            jump_Cnt = 0;
         }
 
         if (collision.tag == "Ground_Wall")

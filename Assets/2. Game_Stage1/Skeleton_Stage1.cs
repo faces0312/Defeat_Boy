@@ -34,7 +34,7 @@ public class Skeleton_Stage1 : MonoBehaviour
 
         is_atk = false;
         speed = 75f;
-        attack_CT = 1f;
+        attack_CT = 0.75f;
 
 
         Think_Move();
@@ -63,7 +63,7 @@ public class Skeleton_Stage1 : MonoBehaviour
             else if (attack_CT <= 0)
             {
                 skeleton_Animator.SetTrigger("Is_Atk");
-                attack_CT = 2f;
+                attack_CT = Random.Range(0.75f, 1.5f);
             }
         }
     }
